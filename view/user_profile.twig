@@ -3,7 +3,7 @@
 
 <main>
     <div class="container">
-        <h2>Register</h2>
+        <h2>Update Profile & Register for a Class</h2>
         <form class="form-signin">
             <label for="username" class="sr-only">Username</label>
             <input type="text" id="username" class="form-control" placeholder="Username">
@@ -27,6 +27,31 @@
             <input type="text" id="password" class="form-control" placeholder="Password">
             <button class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
         </form>
+        
+        
+        <table class="table">
+            
+                    <tr>
+                        <th>Class</th>
+                        <th>Day</th>
+                        <th>Time</th>
+                        <th>Register</th>
+                    </tr>
+                    <tr>
+                        <td>Class</td>
+                        <td>Day</td>
+                        <td>Class</td>
+                        <td>Day</td>
+                    </tr>
+                
+                
+                {#{% for hour in hours %}
+                    <tr>
+                        <th>{{ hour.day }}</th>
+                        <td>{{ hour.hour }}</td>
+                    </tr>
+                {% endfor %}#}
+            </table>
     </div>
 </main>
 </body>

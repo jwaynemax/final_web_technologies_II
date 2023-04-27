@@ -23,6 +23,9 @@ class Controller {
      */
     public function invoke() {
         switch ($this->action) {
+            case 'User_Profile':
+                $this->processShowUserProfilePage();
+                break;
             case 'Personal_Training':
                 $this->processShowPersonalTrainingPage();
                 break;
@@ -50,6 +53,14 @@ class Controller {
     
     /**
      * Process Logout
+     */
+    private function processShowUserProfilePage() {
+        $template = $this->twig->load('user_profile.twig');
+        echo $template->render();
+    }
+    
+    /**
+     * Process show personal training page
      */
     private function processShowPersonalTrainingPage() {
         $template = $this->twig->load('personal_training.twig');

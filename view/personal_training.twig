@@ -1,0 +1,33 @@
+{{ include('/shared/header.twig') }}
+{{ include('/shared/nav.twig') }}
+
+<main>
+    <div class="container">
+        <h2>Personal Training Schedule</h2>
+        <table class="table">
+            
+                    <tr>
+                        <th>Class</th>
+                        <th>Day</th>
+                        <th>Time</th>
+                        <th>Register</th>
+                    </tr>
+                    <tr>
+                        <td>Class</td>
+                        <td>Day</td>
+                        <td>Class</td>
+                        <td>Day</td>
+                    </tr>
+                
+                
+                {#{% for hour in hours %}
+                    <tr>
+                        <th>{{ hour.day }}</th>
+                        <td>{{ hour.hour }}</td>
+                    </tr>
+                {% endfor %}#}
+            </table>
+    </div>
+</main>
+</body>
+</html>

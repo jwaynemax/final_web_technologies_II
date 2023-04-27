@@ -1,5 +1,6 @@
 <?php
 
+require_once './model/Database.php';
 require_once 'autoload.php';
 
 class Controller {
@@ -14,6 +15,8 @@ class Controller {
     public function __construct() {
         $loader = new Twig\Loader\FilesystemLoader('./view');
         $this->twig = new Twig\Environment($loader);
+        $this->setupConnection();
+        $this->connectToDatabase();
         $this->twig->addGlobal('session', $_SESSION);
         $this->action = $this->getAction();
     }
@@ -117,6 +120,34 @@ class Controller {
             }
         }
         return $action;
+    }
+    
+    /**
+     * Ensures a secure connection and start session
+     */
+    private function setupConnection() {
+        $https = filter_input(INPUT_SERVER, 'HTTPS');
+        if (!$https) {
+            $host = filter_input(INPUT_SERVER, 'HTTP_HOST');
+            $uri = filter_input(INPUT_SERVER, 'REQUEST_URI');
+            $url = 'https://' . $host . $uri;
+            header("Location: " . $url);
+            exit();
+        }
+        session_start();
+    }
+
+    /**
+     * Connects to the database
+     */
+    private function connectToDatabase() {
+        $this->db = new Database();
+        if (!$this->db->isConnected()) {
+            $error_message = $this->db->getErrorMessage();
+            $template = $this->twig->load('database_error.twig');
+            echo $template->render(['error_message' => $error_message]);
+            exit();
+        }
     }
 
 }

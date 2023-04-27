@@ -27,24 +27,27 @@
             <input type="text" id="password" class="form-control" placeholder="Password">
             <button class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
         </form>
-        
-        
-        <table class="table">
-            
-                    <tr>
-                        <th>Class</th>
-                        <th>Day</th>
-                        <th>Time</th>
-                        <th>Register</th>
-                    </tr>
-                    <tr>
-                        <td>Class</td>
-                        <td>Day</td>
-                        <td>Class</td>
-                        <td>Day</td>
-                    </tr>
-                
-                
+
+        <div class="profile-table">
+            <h3>Your classes</h3>
+
+
+            <table class="table">
+
+                <tr>
+                    <th>Class</th>
+                    <th>Day</th>
+                    <th>Time</th>
+                    <th>Register</th>
+                </tr>
+                <tr>
+                    <td>Class</td>
+                    <td>Day</td>
+                    <td>Class</td>
+                    <td>Day</td>
+                </tr>
+
+
                 {#{% for hour in hours %}
                     <tr>
                         <th>{{ hour.day }}</th>
@@ -52,6 +55,7 @@
                     </tr>
                 {% endfor %}#}
             </table>
+        </div>
     </div>
 </main>
 </body>

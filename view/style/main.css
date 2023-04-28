@@ -18,3 +18,7 @@ button {
 .profile-table {
     padding-top: 20px;
 }
+
+.error_message {
+    color: red;
+}

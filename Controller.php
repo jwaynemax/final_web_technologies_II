@@ -1,6 +1,7 @@
 <?php
 
 require_once './model/Database.php';
+require_once './model/Validator.php';
 require_once 'autoload.php';
 
 class Controller {
@@ -38,6 +39,9 @@ class Controller {
             case 'Register':
                 $this->processShowRegisterPage();
                 break;
+            case 'Process_Registration':
+                $this->processRegistration();
+                break;
             case 'Login':
                 $this->processShowLoginPage();
                 break;
@@ -55,7 +59,7 @@ class Controller {
      * ************************************************************* */
     
     /**
-     * Process Logout
+     * Show user profile page
      */
     private function processShowUserProfilePage() {
         $template = $this->twig->load('user_profile.twig');
@@ -86,8 +90,50 @@ class Controller {
      * Shows the Register page
      */
     private function processShowRegisterPage() {
+        $error_username = '';
+        $error_password = '';
         $template = $this->twig->load('register.twig');
-        echo $template->render();
+        echo $template->render(['error_username' => $error_username, 'error_password' => $error_password]);
+    }
+    
+    /**
+     * Process Registration
+     */
+    private function processRegistration() {
+        $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $password = filter_input(INPUT_POST, 'password');
+        $first_name = filter_input(INPUT_POST, 'firstName');
+        $last_name = filter_input(INPUT_POST, 'lastName');
+        $address = filter_input(INPUT_POST, 'address');
+        $city = filter_input(INPUT_POST, 'city');
+        $state = filter_input(INPUT_POST, 'state');
+        $postal = filter_input(INPUT_POST, 'postal');
+        $phone = filter_input(INPUT_POST, 'phone');
+        $email = filter_input(INPUT_POST, 'email');
+        
+        
+        $validator = new Validator($this->db);
+        $error_username = $validator->validateUsername($username);
+        $error_password = $validator->validatePassword($password);
+        $error_firstName = $validator->validateValue($first_name);
+        $error_lastname = $validator->validateValue($last_name);
+        $error_address = $validator->validateAddress($address);
+        $error_city = $validator->validateValue($city);
+        $error_state = $validator->validateValue($state);
+        $error_postal = $validator->validatePostal($postal);
+        $error_email = $validator->validateValue($email);
+        
+        if (!empty($error_username) || !empty($error_password)) {
+            $template = $this->twig->load('register.twig');
+            echo $template->render(['error_username' => $error_username, 'error_password' => $error_password, 'error_firstName' => $error_firstName, 'error_lastname' => $error_lastname, 
+                'error_address' => $error_address, 'error_city' => $error_city, 'error_state' => $error_state, 
+                'error_postal' => $error_postal, 'error_email' => $error_email]);
+        } else {
+            $this->db->addCustomer($username, $password, $first_name, $last_name, $address, $city, $state, $postal, $phone, $email);
+            $_SESSION['is_valid_user'] = true;
+            $_SESSION['username'] = $username;
+            header("Location: .?action=User_Profile");
+        }
     }
     
     /**

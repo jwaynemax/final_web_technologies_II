@@ -43,15 +43,49 @@ class Database {
      * @param string $username
      * @return boolean - true if username is in this database
      */
-//    public function isValidUser($username) {
-//        $query = 'SELECT * FROM users
-//              WHERE username = :username';
-//        $statement = $this->db->prepare($query);
-//        $statement->bindValue(':username', $username);
-//        $statement->execute();
-//        $row = $statement->fetch();
-//        $statement->closeCursor();
-//        return !($row === false);
-//    }
+    public function isValidUser($username) {
+        $query = 'SELECT * FROM Customers
+              WHERE Username = :username';
+        $statement = $this->db->prepare($query);
+        $statement->bindValue(':username', $username);
+        $statement->execute();
+        $row = $statement->fetch();
+        $statement->closeCursor();
+        return !($row === false);
+    }
+    
+    /**
+     * Add customer
+     * @param type $username
+     * @param type $password
+     * @param type $first_name
+     * @param type $last_name
+     * @param type $address
+     * @param type $city
+     * @param type $state
+     * @param type $postal
+     * @param type $phone
+     * @param type $email
+     * @return type
+     */
+    public function addCustomer($username, $password, $first_name, $last_name, $address, $city, $state, $postal, $phone, $email) {
+        $query = 'INSERT INTO Customers (Username, Password, First_Name, Last_Name, Address, City, State, Postal, Phone, Email)
+                    VALUES (:username, :password, :first_name, :last_name, :address, :city, :state, :postal, :phone, :email)';
+        $statement = $this->db->prepare($query);
+        $statement->bindValue(':username', $username);
+        $statement->bindValue(':password', $password);
+        $statement->bindValue(':first_name', $first_name);
+        $statement->bindValue(':last_name', $last_name);
+        $statement->bindValue(':address', $address);
+        $statement->bindValue(':city', $city);
+        $statement->bindValue(':state', $state);
+        $statement->bindValue(':postal', $postal);
+        $statement->bindValue(':phone', $phone);
+        $statement->bindValue(':email', $email);
+        $statement->execute();
+        $row = $statement->fetch();
+        $statement->closeCursor();
+        return !($row === false);
+    }
 }
 ?>

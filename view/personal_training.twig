@@ -4,29 +4,33 @@
 <main>
     <div class="container">
         <h2>Personal Training Schedule</h2>
+
         <table class="table">
-            
-                    <tr>
-                        <th>Class</th>
-                        <th>Day</th>
-                        <th>Time</th>
-                        <th>Register</th>
-                    </tr>
-                    <tr>
-                        <td>Class</td>
-                        <td>Day</td>
-                        <td>Class</td>
-                        <td>Day</td>
-                    </tr>
-                
-                
-                {#{% for hour in hours %}
-                    <tr>
-                        <th>{{ hour.day }}</th>
-                        <td>{{ hour.hour }}</td>
-                    </tr>
-                {% endfor %}#}
-            </table>
+                <tr>
+                    <th>Class</th>
+                    <th>Day</th>
+                    <th>Time</th>
+                    {%  if  signed_in == true %}
+                    <th>Register</th>
+                    {% endif %}
+                </tr>
+                {% for class in classes %}
+                <tr>
+                    <td>{{ class['Class_Name'] }}</td>
+                    <td>{{ class['Day_of_Week'] }}</td>
+                    <td>{{ class['Class_Time'] }}</td>
+                    {%  if  signed_in == true %}
+                    <td>
+                        <form action="." method="post" id="register_class">
+                            <input type="hidden" name="Class_id" value="{{ class['Class_id'] }}">
+                            <input type="hidden" name="Customer_id" value="{{ Customer_id }}">
+                            <button class="btn btn-primary" type="submit" name="action" value="register_class">Register</button>
+                        </form>
+                    </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </table>
     </div>
 </main>
 </body>

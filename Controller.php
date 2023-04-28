@@ -33,6 +33,9 @@ class Controller {
             case 'Personal_Training':
                 $this->processShowPersonalTrainingPage();
                 break;
+            case 'register_class':
+                $this->processRegisterForClass();
+                break;
             case 'Logout':
                 $this->processLogout();
                 break;
@@ -57,7 +60,7 @@ class Controller {
     /*     * **************************************************************
      * Process Request
      * ************************************************************* */
-    
+
     /**
      * Show user profile page
      */
@@ -65,13 +68,35 @@ class Controller {
         $template = $this->twig->load('user_profile.twig');
         echo $template->render();
     }
-    
+
     /**
      * Process show personal training page
      */
     private function processShowPersonalTrainingPage() {
+        $classes = $this->db->getClasses();
+
+        if ($_SESSION['is_valid_user'] == true) {
+            $signedIn = true;
+        } else {
+            $signedIn = false;
+        }
+        
+        $Customer_id = $_SESSION['customer_id'];
+
         $template = $this->twig->load('personal_training.twig');
-        echo $template->render();
+        echo $template->render(['classes' => $classes, 'signed_in' => $signedIn, 'Customer_id' => $Customer_id]);
+    }
+    
+    /**
+     * Process register for a class
+     */
+    private function processRegisterForClass() {
+        $Customer_id = filter_input(INPUT_POST, 'Customer_id');
+        $Class_id = filter_input(INPUT_POST, 'Class_id');
+
+        $this->db->registerClass($Customer_id, $Class_id);
+
+        header("Location: .?action=User_Profile");
     }
     
     /**
@@ -85,7 +110,7 @@ class Controller {
         $template = $this->twig->load('login.twig');
         echo $template->render(['login_message' => $login_message, 'session']);
     }
-    
+
     /**
      * Shows the Register page
      */
@@ -95,7 +120,7 @@ class Controller {
         $template = $this->twig->load('register.twig');
         echo $template->render(['error_username' => $error_username, 'error_password' => $error_password]);
     }
-    
+
     /**
      * Process Registration
      */
@@ -110,8 +135,7 @@ class Controller {
         $postal = filter_input(INPUT_POST, 'postal');
         $phone = filter_input(INPUT_POST, 'phone');
         $email = filter_input(INPUT_POST, 'email');
-        
-        
+
         $validator = new Validator($this->db);
         $error_username = $validator->validateUsername($username);
         $error_password = $validator->validatePassword($password);
@@ -122,20 +146,21 @@ class Controller {
         $error_state = $validator->validateValue($state);
         $error_postal = $validator->validatePostal($postal);
         $error_email = $validator->validateValue($email);
-        
-        if (!empty($error_username) || !empty($error_password)) {
+
+        if (!empty($error_username) || !empty($error_password) || !empty($error_firstName) || !empty($error_lastname) || !empty($error_address) || !empty($error_city) || !empty($error_state) || !empty($error_postal) || !empty($error_email)) {
             $template = $this->twig->load('register.twig');
-            echo $template->render(['error_username' => $error_username, 'error_password' => $error_password, 'error_firstName' => $error_firstName, 'error_lastname' => $error_lastname, 
-                'error_address' => $error_address, 'error_city' => $error_city, 'error_state' => $error_state, 
+            echo $template->render(['error_username' => $error_username, 'error_password' => $error_password, 'error_firstName' => $error_firstName, 'error_lastname' => $error_lastname,
+                'error_address' => $error_address, 'error_city' => $error_city, 'error_state' => $error_state,
                 'error_postal' => $error_postal, 'error_email' => $error_email]);
         } else {
             $this->db->addCustomer($username, $password, $first_name, $last_name, $address, $city, $state, $postal, $phone, $email);
+            $_SESSION['customer_id'] = $this->db->getCustomerIdByUsername($username);
             $_SESSION['is_valid_user'] = true;
             $_SESSION['username'] = $username;
             header("Location: .?action=User_Profile");
         }
     }
-    
+
     /**
      * Shows the Login page
      */
@@ -167,7 +192,7 @@ class Controller {
         }
         return $action;
     }
-    
+
     /**
      * Ensures a secure connection and start session
      */

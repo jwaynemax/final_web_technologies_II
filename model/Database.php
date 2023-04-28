@@ -87,5 +87,37 @@ class Database {
         $statement->closeCursor();
         return !($row === false);
     }
+    
+    public function getClasses() {
+        $query = 'SELECT * FROM Classes';
+        $statement = $this->db->prepare($query);
+        $statement->execute();
+        $classes = $statement->fetchAll();
+        $statement->closeCursor();
+        return $classes;
+    }
+    
+    public function registerClass($Customer_id, $Class_id) {
+        $query = 'INSERT INTO Registered_Classes (Customer_id, Class_id)
+                    VALUES (:Customer_id, :Class_id)';
+        $statement = $this->db->prepare($query);
+        $statement->bindValue(':Customer_id', $Customer_id);
+        $statement->bindValue(':Class_id', $Class_id);
+        $statement->execute();
+        $row = $statement->fetch();
+        $statement->closeCursor();
+        return !($row === false);
+    }
+    
+    public function getCustomerIdByUsername($username) {
+        $query = 'SELECT Customer_id FROM Customers WHERE Username = :username';
+        $statement = $this->db->prepare($query);
+        $statement->bindValue(':username', $username);
+        $statement->execute();
+        $row = $statement->fetch();
+        $Customer_id = $row['Customer_id'];
+        $statement->closeCursor();
+        return $Customer_id;
+    }
 }
 ?>

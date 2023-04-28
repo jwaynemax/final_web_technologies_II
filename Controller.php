@@ -141,6 +141,17 @@ class Controller {
      * Shows the Register page
      */
     private function processShowRegisterPage() {
+        $username = "";
+        $password = "";
+        $first_name = "";
+        $last_name = "";
+        $address = "";
+        $city = "";
+        $state = "";
+        $postal = "";
+        $phone = "";
+        $email = "";
+        
         $error_username = '';
         $error_password = '';
         $template = $this->twig->load('register.twig');
@@ -177,7 +188,9 @@ class Controller {
             $template = $this->twig->load('register.twig');
             echo $template->render(['error_username' => $error_username, 'error_password' => $error_password, 'error_firstName' => $error_firstName, 'error_lastname' => $error_lastname,
                 'error_address' => $error_address, 'error_city' => $error_city, 'error_state' => $error_state,
-                'error_postal' => $error_postal, 'error_email' => $error_email]);
+                'error_postal' => $error_postal, 'error_email' => $error_email,
+                'username' => $username, 'password' => $password, 'first_name' => $first_name, 'last_name' => $last_name, 'address' => $address, 
+                'city' => $city, 'state' => $state, 'postal' => $postal, 'phone' => $phone, 'email' => $email]);
         } else {
             $hash = password_hash($password, PASSWORD_DEFAULT);
             $this->db->addCustomer($username, $hash, $first_name, $last_name, $address, $city, $state, $postal, $phone, $email);

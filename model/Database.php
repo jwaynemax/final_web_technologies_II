@@ -30,21 +30,10 @@ class Database {
         return ($this->db != Null);
     }
 
-    /**
-     * Returns the error message
-     * 
-     * @return string - the error message
-     */
     public function getErrorMessage() {
         return $this->error_message;
     }
 
-    /**
-     * Checks if the specified username is in this database
-     * 
-     * @param string $username
-     * @return boolean - true if username is in this database
-     */
     public function isValidUser($username) {
         $query = 'SELECT * FROM Customers
               WHERE Username = :username';
@@ -71,20 +60,6 @@ class Database {
         return password_verify($password, $hash);
     }
 
-    /**
-     * Add customer
-     * @param type $username
-     * @param type $password
-     * @param type $first_name
-     * @param type $last_name
-     * @param type $address
-     * @param type $city
-     * @param type $state
-     * @param type $postal
-     * @param type $phone
-     * @param type $email
-     * @return type
-     */
     public function addCustomer($username, $password, $first_name, $last_name, $address, $city, $state, $postal, $phone, $email) {
         $query = 'INSERT INTO Customers (Username, Password, First_Name, Last_Name, Address, City, State, Postal, Phone, Email)
                     VALUES (:username, :password, :first_name, :last_name, :address, :city, :state, :postal, :phone, :email)';
@@ -157,7 +132,6 @@ class Database {
         $statement->execute();
         $statement->closeCursor();
     }
-
 }
 
 ?>

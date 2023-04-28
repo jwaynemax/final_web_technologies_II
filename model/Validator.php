@@ -9,13 +9,6 @@ class Validator {
         $this->db = $db;
     }
     
-    /**
-     * Checks if the specified username is a valid new username
-     * 
-     * @param string $username
-     * @return string an error message if the username is invalid; en empty
-     *          string otherwise
-     */
     public function validateUsername($username) {
         $error_username = '';
         if (empty($username)) {
@@ -28,13 +21,6 @@ class Validator {
         return $error_username;
     }
     
-    /**
-     * Checks if the specified password is valid
-     * 
-     * @param type $password
-     * @return string an error message if the password is invalid; en empty
-     *          string otherwise
-     */
     public function validatePassword($password) {
         $error_password = '';
         if (empty($password)) {

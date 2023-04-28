@@ -14,13 +14,13 @@ class Controller {
      * Instantiates a new controller
      */
     public function __construct() {
-        
+
         if (session_status() == PHP_SESSION_NONE) {
             $lifetime = 60 * 60 * 24 * 14; // 2 weeks in seconds 
             session_set_cookie_params($lifetime, '/');
             session_start();
         }
-        
+
         $loader = new Twig\Loader\FilesystemLoader('./view');
         $this->twig = new Twig\Environment($loader);
         $this->setupConnection();
@@ -61,6 +61,9 @@ class Controller {
             case 'Home':
                 $this->processShowHomePage();
                 break;
+            case 'delete_class':
+                $this->processDeleteClass();
+                break;
             default:
                 $this->processShowHomePage();
                 break;
@@ -78,7 +81,7 @@ class Controller {
         $Customer_id = $_SESSION['customer_id'];
         $classes = $this->db->getClassesDetailsByCustomer($Customer_id);
         $username = $_SESSION['username'];
-        
+
         $template = $this->twig->load('user_profile.twig');
         echo $template->render(['classes' => $classes, 'Customer_id' => $Customer_id, 'username' => $username]);
     }
@@ -94,13 +97,13 @@ class Controller {
         } else {
             $signedIn = false;
         }
-        
+
         $Customer_id = $_SESSION['customer_id'];
 
         $template = $this->twig->load('personal_training.twig');
         echo $template->render(['classes' => $classes, 'signed_in' => $signedIn, 'Customer_id' => $Customer_id]);
     }
-    
+
     /**
      * Process register for a class
      */
@@ -112,7 +115,7 @@ class Controller {
 
         header("Location: .?action=User_Profile");
     }
-    
+
     /**
      * Process Logout
      */
@@ -192,7 +195,7 @@ class Controller {
         $template = $this->twig->load('login.twig');
         echo $template->render();
     }
-    
+
     /**
      * Logs in the user with the credentials specified in the post array
      */
@@ -217,6 +220,16 @@ class Controller {
     private function processShowHomePage() {
         $template = $this->twig->load('home.twig');
         echo $template->render();
+    }
+
+    /**
+     * Delete the class from user's profile
+     */
+    private function processDeleteClass() {
+        $registered_class_id = filter_input(INPUT_POST, 'Registered_Class_id');
+        $this->db->deleteClassFromCustomer($registered_class_id);
+
+        header("Location: .?action=User_Profile");
     }
 
     /**

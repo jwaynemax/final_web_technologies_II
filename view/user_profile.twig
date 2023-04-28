@@ -18,7 +18,12 @@
                         <td>{{ class['Class_Name'] }}</td>
                         <td>{{ class['Day_of_Week'] }}</td>
                         <td>{{ class['Class_Time'] }}</td>
-                        <td><button type="button" class="btn btn-danger">Delete</button></td>
+                        <td>
+                            <form action="." method="post" id="delete_class">
+                            <input type="hidden" name="Class_id" value="{{ class['Class_id'] }}">
+                            <input type="hidden" name="Registered_Class_id" value="{{ class['Registered_Class_id'] }}">
+                            <button class="btn btn-danger" type="submit" name="action" value="delete_class">Delete</button>
+                        </td>
                     </tr>
                 {% endfor %}
             </table>

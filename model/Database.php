@@ -55,7 +55,7 @@ class Database {
         $statement->closeCursor();
         return !($row === false);
     }
-    
+
     public function isValidUserLogin($username, $password) {
         $query = 'SELECT Password FROM Customers
               WHERE Username = :username';
@@ -148,6 +148,14 @@ class Database {
         $classes = $statement->fetchAll();
         $statement->closeCursor();
         return $classes;
+    }
+
+    public function deleteClassFromCustomer($registered_class_id) {
+        $query = 'DELETE FROM Registered_Classes WHERE Registered_Classes.Registered_Class_id = :registered_class_id';
+        $statement = $this->db->prepare($query);
+        $statement->bindValue(':registered_class_id', $registered_class_id);
+        $statement->execute();
+        $statement->closeCursor();
     }
 
 }

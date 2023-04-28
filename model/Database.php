@@ -55,6 +55,21 @@ class Database {
         $statement->closeCursor();
         return !($row === false);
     }
+    
+    public function isValidUserLogin($username, $password) {
+        $query = 'SELECT Password FROM Customers
+              WHERE Username = :username';
+        $statement = $this->db->prepare($query);
+        $statement->bindValue(':username', $username);
+        $statement->execute();
+        $row = $statement->fetch();
+        $statement->closeCursor();
+        if ($row === false) {
+            return false;
+        }
+        $hash = $row['Password'];
+        return password_verify($password, $hash);
+    }
 
     /**
      * Add customer

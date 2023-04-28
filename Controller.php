@@ -14,6 +14,13 @@ class Controller {
      * Instantiates a new controller
      */
     public function __construct() {
+        
+        if (session_status() == PHP_SESSION_NONE) {
+            $lifetime = 60 * 60 * 24 * 14; // 2 weeks in seconds 
+            session_set_cookie_params($lifetime, '/');
+            session_start();
+        }
+        
         $loader = new Twig\Loader\FilesystemLoader('./view');
         $this->twig = new Twig\Environment($loader);
         $this->setupConnection();
@@ -47,6 +54,9 @@ class Controller {
                 break;
             case 'Login':
                 $this->processShowLoginPage();
+                break;
+            case 'Process_Login':
+                $this->processLogin();
                 break;
             case 'Home':
                 $this->processShowHomePage();
@@ -109,6 +119,15 @@ class Controller {
     private function processLogout() {
         $_SESSION = array();
         session_destroy();
+        $name = session_name();
+        $expire = time() - 3600;
+        $params = session_get_cookie_params();
+        $path = $params['path'];
+        $domain = $params['domain'];
+        $secure = $params['secure'];
+        $httponly = $params['httponly'];
+        setcookie($name, '', $expire, $path, $domain, $secure, $httponly);
+
         $this->twig->addGlobal('session', $_SESSION);
         $login_message = 'You have been logged out.';
         $template = $this->twig->load('login.twig');
@@ -157,7 +176,8 @@ class Controller {
                 'error_address' => $error_address, 'error_city' => $error_city, 'error_state' => $error_state,
                 'error_postal' => $error_postal, 'error_email' => $error_email]);
         } else {
-            $this->db->addCustomer($username, $password, $first_name, $last_name, $address, $city, $state, $postal, $phone, $email);
+            $hash = password_hash($password, PASSWORD_DEFAULT);
+            $this->db->addCustomer($username, $hash, $first_name, $last_name, $address, $city, $state, $postal, $phone, $email);
             $_SESSION['customer_id'] = $this->db->getCustomerIdByUsername($username);
             $_SESSION['is_valid_user'] = true;
             $_SESSION['username'] = $username;
@@ -171,6 +191,24 @@ class Controller {
     private function processShowLoginPage() {
         $template = $this->twig->load('login.twig');
         echo $template->render();
+    }
+    
+    /**
+     * Logs in the user with the credentials specified in the post array
+     */
+    private function processLogin() {
+        $username = filter_input(INPUT_POST, 'username');
+        $password = filter_input(INPUT_POST, 'password');
+        if ($this->db->isValidUserLogin($username, $password)) {
+            $_SESSION['is_valid_user'] = true;
+            $_SESSION['username'] = $username;
+            $_SESSION['customer_id'] = $this->db->getCustomerIdByUsername($username);
+            header("Location: .?action=User_Profile");
+        } else {
+            $login_message = 'Invalid username or password';
+            $template = $this->twig->load('login.twig');
+            echo $template->render(['login_message' => $login_message]);
+        }
     }
 
     /**

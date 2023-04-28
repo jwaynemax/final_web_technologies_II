@@ -1,8 +1,10 @@
 <?php
+
 class Database {
+
     private $db;
     private $error_message;
-    
+
     /**
      * Instantiates a new database object that connects
      * to the database
@@ -18,7 +20,7 @@ class Database {
             $this->error_message = $e->getMessage();
         }
     }
-    
+
     /**
      * Checks the connection to the database
      *
@@ -27,7 +29,7 @@ class Database {
     public function isConnected() {
         return ($this->db != Null);
     }
-    
+
     /**
      * Returns the error message
      * 
@@ -36,7 +38,7 @@ class Database {
     public function getErrorMessage() {
         return $this->error_message;
     }
-    
+
     /**
      * Checks if the specified username is in this database
      * 
@@ -53,7 +55,7 @@ class Database {
         $statement->closeCursor();
         return !($row === false);
     }
-    
+
     /**
      * Add customer
      * @param type $username
@@ -87,7 +89,7 @@ class Database {
         $statement->closeCursor();
         return !($row === false);
     }
-    
+
     public function getClasses() {
         $query = 'SELECT * FROM Classes';
         $statement = $this->db->prepare($query);
@@ -96,7 +98,7 @@ class Database {
         $statement->closeCursor();
         return $classes;
     }
-    
+
     public function registerClass($Customer_id, $Class_id) {
         $query = 'INSERT INTO Registered_Classes (Customer_id, Class_id)
                     VALUES (:Customer_id, :Class_id)';
@@ -108,7 +110,7 @@ class Database {
         $statement->closeCursor();
         return !($row === false);
     }
-    
+
     public function getCustomerIdByUsername($username) {
         $query = 'SELECT Customer_id FROM Customers WHERE Username = :username';
         $statement = $this->db->prepare($query);
@@ -119,5 +121,20 @@ class Database {
         $statement->closeCursor();
         return $Customer_id;
     }
+
+    public function getClassesDetailsByCustomer($Customer_id) {
+        $query = ' SELECT * FROM Classes
+                    JOIN Registered_Classes ON Classes.Class_id = Registered_Classes.Class_id
+                    JOIN Customers ON Customers.Customer_id = Registered_Classes.Customer_id
+                    WHERE Customers.Customer_id = :Customer_id';
+        $statement = $this->db->prepare($query);
+        $statement->bindValue(':Customer_id', $Customer_id);
+        $statement->execute();
+        $classes = $statement->fetchAll();
+        $statement->closeCursor();
+        return $classes;
+    }
+
 }
+
 ?>

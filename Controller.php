@@ -65,8 +65,12 @@ class Controller {
      * Show user profile page
      */
     private function processShowUserProfilePage() {
+        $Customer_id = $_SESSION['customer_id'];
+        $classes = $this->db->getClassesDetailsByCustomer($Customer_id);
+        $username = $_SESSION['username'];
+        
         $template = $this->twig->load('user_profile.twig');
-        echo $template->render();
+        echo $template->render(['classes' => $classes, 'Customer_id' => $Customer_id, 'username' => $username]);
     }
 
     /**

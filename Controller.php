@@ -151,7 +151,7 @@ class Controller {
         $postal = "";
         $phone = "";
         $email = "";
-        
+
         $error_username = '';
         $error_password = '';
         $template = $this->twig->load('register.twig');
@@ -182,14 +182,14 @@ class Controller {
         $error_city = $validator->validateValue($city);
         $error_state = $validator->validateValue($state);
         $error_postal = $validator->validatePostal($postal);
-        $error_email = $validator->validateValue($email);
+        $error_email = $validator->validateEmail($email);
 
         if (!empty($error_username) || !empty($error_password) || !empty($error_firstName) || !empty($error_lastname) || !empty($error_address) || !empty($error_city) || !empty($error_state) || !empty($error_postal) || !empty($error_email)) {
             $template = $this->twig->load('register.twig');
             echo $template->render(['error_username' => $error_username, 'error_password' => $error_password, 'error_firstName' => $error_firstName, 'error_lastname' => $error_lastname,
                 'error_address' => $error_address, 'error_city' => $error_city, 'error_state' => $error_state,
                 'error_postal' => $error_postal, 'error_email' => $error_email,
-                'username' => $username, 'password' => $password, 'first_name' => $first_name, 'last_name' => $last_name, 'address' => $address, 
+                'username' => $username, 'password' => $password, 'first_name' => $first_name, 'last_name' => $last_name, 'address' => $address,
                 'city' => $city, 'state' => $state, 'postal' => $postal, 'phone' => $phone, 'email' => $email]);
         } else {
             $hash = password_hash($password, PASSWORD_DEFAULT);
